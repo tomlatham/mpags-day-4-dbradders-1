@@ -2,18 +2,21 @@
 #define MPAGSCIPHER_PLAYFAIRCIPHER_HPP
 
 #include <string>
-
+#include "CipherMode.hpp"
 
 class PlayfairCipher {
 public:
   
-  const std::string key;
-
   explicit PlayfairCipher(const std::string& key );
 
-  std::string setKey(const std::string& key);
+  std::string applyCipher(const std::string& inputText, const CipherMode cipherMode) const;
 
-  std::string applyCipher() const;
+private:
+
+  const std::string key_{""};
+
+  void setKey(const std::string& key);
+  
 
 };
 
