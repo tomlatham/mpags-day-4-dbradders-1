@@ -19,7 +19,7 @@ void PlayfairCipher::setKey(const std::string& key)
   key_ = key;
 
   // Append the alphabet
-  key_ += Alphabet::alphabet;
+  key_ += std::string Alphabet.alphabet;
 
   // Make sure the key is upper case
   // Using std::transform algorithm
@@ -30,8 +30,8 @@ void PlayfairCipher::setKey(const std::string& key)
   // Used lambda, removing elements from beginning to end of key_
   // if the element (declared explicitly as c) is not alphabetic
   key_.erase( std::remove_if( std::begin(key_), std::end(key_), [](char c){
-	return !std::isalpha(c);});
-        std::end(key_));
+	return !std::isalpha(c);}),
+    std::end(key_));
     
   // Change J -> I
   std::transform (std::begin(key_), std::end(key_), std::begin(key_), [](char c){return (c == 'J') ? 'I' : c; });
@@ -40,7 +40,7 @@ void PlayfairCipher::setKey(const std::string& key)
   // Create and store lambda function detectDuplicates that captures
   // by reference each letter. If c is not found in the string lettersFound
   // then return is false and c is added to the string lettersFound
-  std:string lettersFound {""};
+  std::string lettersFound {""};
   auto detectDuplicates = [&](char c) {
     if ( lettersFound.find(c) == std::string::npos ) {
       lettersFound +=c;
@@ -50,22 +50,27 @@ void PlayfairCipher::setKey(const std::string& key)
     }
   };
   // Remove if duplicate in similar manner as before
-  key_.erase( std::remove_if( std::remove_if( std::begin(key_), std::end(key_),
-					      detectDuplicates );
+  key_.erase( std::remove_if( std::begin(key_), std::end(key_),
+					      detectDuplicates ),
 			      std::end(key_) );
 
   // Store the coords of each letter
-	      for (std::string::size_type i{0}; i < keyLength_; ++i) {
-		const int gridDim{5};
+  for (std::string::size_type i{0}; i < key_.size(); ++i) {
+		const int gridDim_{5};
 		std::string::size_type row{ i/gridDim_};
 		std::string::size_type column{ i%gridDim_};
 
 		auto coords = std::make_pair(row, column);
 			      
   // Store the playfair cipher key map
-		char mapLetter = key_[i];
-		auto letterToCoords_[mapLetter] = coords;
-		auto coordsToLetter_[coords] = mapLetter;
+		using Char2Coords = std::map<char, std::pair<int, int>>;
+		using Coords2Char = std::map<std::pair<int, int>, char>;
+		Char2Coords letterToCoords_;
+		Coords2Char coordsToLetter_;
+		letterToCoords_.insert(coords);
+		coordsToLetter_.insert(key_[i]);
+		
+  }
 }
 
 std::string PlayfairCipher::applyCipher(const std::string& inputText,
