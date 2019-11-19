@@ -13,7 +13,7 @@ public:
 
 private:
 
-  const std::string key_{""};
+  std::string key_{""};
 
   void setKey(const std::string& key);
   
