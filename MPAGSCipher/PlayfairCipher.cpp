@@ -63,13 +63,9 @@ void PlayfairCipher::setKey(const std::string& key)
 		auto coords = std::make_pair(row, column);
 			      
   // Store the playfair cipher key map
-		using Char2Coords = std::map<char, std::pair<int, int>>;
-		using Coords2Char = std::map<std::pair<int, int>, char>;
-		Char2Coords letterToCoords_;
-		Coords2Char coordsToLetter_;
+
 		letterToCoords_.insert(coords);
 		coordsToLetter_.insert(key_[i]);
-		
   }
 }
 

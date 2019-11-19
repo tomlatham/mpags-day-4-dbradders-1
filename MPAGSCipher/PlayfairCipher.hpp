@@ -24,6 +24,12 @@ private:
   };
   
 
+  using Char2Coords = std::map<char, std::pair<int, int>>;
+  using Coords2Char = std::map<std::pair<int, int>, char>;
+  Char2Coords letterToCoords_;
+  Coords2Char coordsToLetter_;
+  
+
 };
 
 #endif
