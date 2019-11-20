@@ -43,7 +43,7 @@ void PlayfairCipher::setKey(const std::string& key)
   std::string lettersFound {""};
   auto detectDuplicates = [&](char c) {
     if ( lettersFound.find(c) == std::string::npos ) {
-      lettersFound +=c;
+      lettersFound += c;
       return false;
     } else {
       return true;
@@ -73,8 +73,11 @@ std::string PlayfairCipher::applyCipher(const std::string& inputText,
 					const CipherMode cipherMode) const;
 {
   // Change J -> I
+  std::transform (std::begin(inputText), std::end(inputText),
+		  std::begin(inputText), [](char c){return (c == 'J') ? 'I' : c; });
 
   // If repeated chars in a diagraph add an X or Q if XX
+  
 
   // if the size of input is odd, add a trailing Z
 
