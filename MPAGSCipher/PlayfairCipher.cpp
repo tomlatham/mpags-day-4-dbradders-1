@@ -19,7 +19,7 @@ void PlayfairCipher::setKey(const std::string& key)
   key_ = key;
 
   // Append the alphabet
-  key_ += std::string Alphabet.alphabet;
+  key_ += std::string alphabet_.alphabet;
 
   // Make sure the key is upper case
   // Using std::transform algorithm
@@ -77,12 +77,29 @@ std::string PlayfairCipher::applyCipher(const std::string& inputText,
 		  std::begin(inputText), [](char c){return (c == 'J') ? 'I' : c; });
 
   // If repeated chars in a diagraph add an X or Q if XX
-  
+  for (std::string::size_type i{0}; i < inputText.size(); ++i) {
+
+    if (inputText[i] == inputText[i-1])
+      {
+	if (inputText[i] == 'X')
+	  {
+	    inputText.insert(i, 'Q');
+	  }
+	else{
+	  inputText.insert(i, 'X');
+	}
+      }
+    
+  };
 
   // if the size of input is odd, add a trailing Z
+  if ((inputText.size()%2) == 1)
+    {
+      inputText += 'Z';
+    }
 
   // Loop over the input in Diagraphs
-
+  
   // -Find the coords in the grid for each diagraph
 
   // -Apply the rules to these coords to get 'new' coords

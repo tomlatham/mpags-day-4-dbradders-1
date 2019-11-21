@@ -22,7 +22,8 @@ private:
     std::string alphabet{"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
     const std::vector<char>::size_type alphabetSize = alphabet.size();
   };
-  
+
+  Alphabet alphabet_;
 
   using Char2Coords = std::map<char, std::pair<int, int>>;
   using Coords2Char = std::map<std::pair<int, int>, char>;
