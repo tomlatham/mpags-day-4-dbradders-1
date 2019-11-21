@@ -99,14 +99,49 @@ std::string PlayfairCipher::applyCipher(const std::string& inputText,
     }
 
   // Loop over the input in Diagraphs
+  for (std::string::size_type i{0}; i < (2*inputText.size(); i += 2){
   
   // -Find the coords in the grid for each diagraph
-
+      auto coord1 = letterToCoords_.find(inputText[i])->second;
+      auto coord2 = letterToCoords_.find(inputText[i+1])->second;
+      auto newcoord1;
+      auto newcoord2;
+	
   // -Apply the rules to these coords to get 'new' coords
+      if(coord1.row == coord2.row)
+	{
+	  if (cipherMode == CipherMode::Encrypt){
+	    newcoord1.column = ((coord1.column + 1) % gridDim_);
+	    newcoord2.column = ((coord2.column + 1) % gridDim_);	    
+	  }
+	  else{
+	    newcoord1.column = ((coord1.column - 1) % gridDim_);
+	    newcoord2.column = ((coord2.column - 1) % gridDim_);	    
+	  }
+	}
+      else if (coord1.column == coord2.column)
+	{
+	  if (cipherMode == CipherMode::Encrypt){
+	    newcoord1.row = ((coord1.row + 1) % gridDim_);
+	    newcoord2.row = ((coord2.row + 1) % gridDim_);	    
+	  }
+	  else{
+	    newcoord1.row = ((coord1.row - 1) % gridDim_);
+	    newcoord2.row = ((coord2.row - 1) % gridDim_);	    
+	  }
+	}
+      else
+	{
+	  auto x = newcoord1;
+	  newcoord1 = newcoord2;
+	  newcoord2 = x;
+	}
 
   // -Find the letter associated with the new coords
+      auto input = (coordsToLetter_.find(newcoord1, newcoord2));
 
+    }
   // return the text
   return input;
-
+   
 }
