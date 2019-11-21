@@ -59,6 +59,7 @@ class CaesarCipher {
     /// The cipher key, essentially a constant shift to be applied
     /**
    * \brief Cipher key
+   */
     size_t key_ = 0;
 };
 

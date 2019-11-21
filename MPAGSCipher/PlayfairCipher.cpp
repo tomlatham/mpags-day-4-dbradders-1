@@ -19,7 +19,7 @@ void PlayfairCipher::setKey(const std::string& key)
   key_ = key;
 
   // Append the alphabet
-  key_ += std::string alphabet_.alphabet;
+  key_ += alphabet_.alphabet;
 
   // Make sure the key is upper case
   // Using std::transform algorithm
@@ -56,7 +56,6 @@ void PlayfairCipher::setKey(const std::string& key)
 
   // Store the coords of each letter
   for (std::string::size_type i{0}; i < key_.size(); ++i) {
-		const int gridDim_{5};
 		std::string::size_type row{ i/gridDim_};
 		std::string::size_type column{ i%gridDim_};
 
@@ -64,84 +63,89 @@ void PlayfairCipher::setKey(const std::string& key)
 			      
   // Store the playfair cipher key map
 
-		letterToCoords_.insert(coords);
-		coordsToLetter_.insert(key_[i]);
+		letterToCoords_.insert( std::make_pair( key_[i], coords ) );
+		coordsToLetter_.insert( std::make_pair( coords, key_[i] ) );
   }
 }
 
 std::string PlayfairCipher::applyCipher(const std::string& inputText,
-					const CipherMode cipherMode) const;
+					const CipherMode cipherMode) const
 {
+  std::string outputText {inputText};
+
   // Change J -> I
-  std::transform (std::begin(inputText), std::end(inputText),
-		  std::begin(inputText), [](char c){return (c == 'J') ? 'I' : c; });
+  std::transform (std::begin(outputText), std::end(outputText),
+		  std::begin(outputText), [](char c){return (c == 'J') ? 'I' : c; });
 
   // If repeated chars in a diagraph add an X or Q if XX
-  for (std::string::size_type i{0}; i < inputText.size(); ++i) {
+  for (std::string::size_type i{0}; i < outputText.size(); i += 2) {
 
-    if (inputText[i] == inputText[i-1])
+    if (outputText[i] == outputText[i+1])
       {
-	if (inputText[i] == 'X')
+	if (outputText[i] == 'X')
 	  {
-	    inputText.insert(i, 'Q');
+	    outputText.insert(i+1, "Q");
 	  }
 	else{
-	  inputText.insert(i, 'X');
+	  outputText.insert(i+1, "X");
 	}
       }
     
   };
 
   // if the size of input is odd, add a trailing Z
-  if ((inputText.size()%2) == 1)
+  if ((outputText.size()%2) == 1)
     {
-      inputText += 'Z';
+      outputText += 'Z';
     }
 
   // Loop over the input in Diagraphs
-  for (std::string::size_type i{0}; i < (2*inputText.size(); i += 2){
+  for (std::string::size_type i{0}; i < outputText.size(); i += 2){
   
   // -Find the coords in the grid for each diagraph
-      auto coord1 = letterToCoords_.find(inputText[i])->second;
-      auto coord2 = letterToCoords_.find(inputText[i+1])->second;
-      auto newcoord1;
-      auto newcoord2;
+      auto coord1 = letterToCoords_.find(outputText[i])->second;
+      auto coord2 = letterToCoords_.find(outputText[i+1])->second;
+      auto newcoord1{coord1};
+      auto newcoord2{coord2};
 	
   // -Apply the rules to these coords to get 'new' coords
-      if(coord1.row == coord2.row)
+      if(coord1.first == coord2.first)
 	{
+		// Rows are the same, increment or decrement the column numbers (modulo the grid size)
 	  if (cipherMode == CipherMode::Encrypt){
-	    newcoord1.column = ((coord1.column + 1) % gridDim_);
-	    newcoord2.column = ((coord2.column + 1) % gridDim_);	    
+	    newcoord1.second = ((coord1.second + 1) % gridDim_);
+	    newcoord2.second = ((coord2.second + 1) % gridDim_);	    
 	  }
 	  else{
-	    newcoord1.column = ((coord1.column - 1) % gridDim_);
-	    newcoord2.column = ((coord2.column - 1) % gridDim_);	    
+	    newcoord1.second = ((coord1.second + gridDim_ - 1) % gridDim_);
+	    newcoord2.second = ((coord2.second + gridDim_ - 1) % gridDim_);	    
 	  }
 	}
-      else if (coord1.column == coord2.column)
+      else if (coord1.second == coord2.second)
 	{
+		// Columns are the same, increment or decrement the row numbers (modulo the grid size)
 	  if (cipherMode == CipherMode::Encrypt){
-	    newcoord1.row = ((coord1.row + 1) % gridDim_);
-	    newcoord2.row = ((coord2.row + 1) % gridDim_);	    
+	    newcoord1.first = ((coord1.first + 1) % gridDim_);
+	    newcoord2.first = ((coord2.first + 1) % gridDim_);	    
 	  }
 	  else{
-	    newcoord1.row = ((coord1.row - 1) % gridDim_);
-	    newcoord2.row = ((coord2.row - 1) % gridDim_);	    
+	    newcoord1.first = ((coord1.first + gridDim_ - 1) % gridDim_);
+	    newcoord2.first = ((coord2.first + gridDim_ - 1) % gridDim_);	    
 	  }
 	}
       else
 	{
-	  auto x = newcoord1;
-	  newcoord1 = newcoord2;
-	  newcoord2 = x;
+    // Square/rectangle, swap the column indices
+    std::swap( newcoord1.second, newcoord2.second );
 	}
 
   // -Find the letter associated with the new coords
-      auto input = (coordsToLetter_.find(newcoord1, newcoord2));
+      outputText[i]   = coordsToLetter_.find(newcoord1)->second;
+      outputText[i+1] = coordsToLetter_.find(newcoord2)->second;
+      
 
     }
   // return the text
-  return input;
+  return outputText;
    
 }
